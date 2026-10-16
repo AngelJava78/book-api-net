@@ -1,0 +1,32 @@
+@host = https://localhost:7190
+
+### Obtener todos los libros
+GET {{host}}/api/books
+Accept: application/json
+
+### Obtener un libro
+GET {{host}}/api/books/1
+Accept: application/json
+
+### Crear libro
+POST {{host}}/api/books
+Content-Type: application/json
+
+{
+  "title": "Clean Code",
+  "author": "Robert C. Martin",
+  "publicationYear": 2008
+}
+
+### Actualizar libro
+PUT {{host}}/api/books/1
+Content-Type: application/json
+
+{
+  "title": "Don Quijote de la Mancha",
+  "author": "Miguel de Cervantes",
+  "publicationYear": 1605
+}
+
+### Eliminar libro
+DELETE {{host}}/api/books/1
