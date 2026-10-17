@@ -55,3 +55,50 @@ Perfil HTTPS esperado: `https://localhost:7190`.
 ## Autenticación
 
 Esta primera versión no implementa autenticación. La idea es agregarla después para que la aplicación ASP.NET Core MVC autenticada con Auth0 consuma esta API usando un Access Token.
+
+## Autenticacion con Auth0
+
+Esta API esta protegida con JWT Bearer de Auth0.
+
+Configuracion:
+
+```json
+"Auth0": {
+  "Domain": "dev-angel-java.us.auth0.com",
+  "Audience": "https://demo-api"
+}
+```
+
+Todos los endpoints de `BooksController` requieren un Access Token valido porque el controller tiene `[Authorize]`.
+
+Una llamada valida debe incluir:
+
+```http
+Authorization: Bearer <access_token>
+```
+
+Comportamiento esperado:
+
+- Sin token: `401 Unauthorized`
+- Token invalido: `401 Unauthorized`
+- Token valido con `aud = https://demo-api`: acceso permitido
+
+La API valida el token usando el `Domain` de Auth0 como Authority y `https://demo-api` como Audience.
+
+## Autorización por permisos
+
+La API conserva Auth0 para autenticación y consulta a Users API para autorización.
+
+Permisos por endpoint:
+
+- GET /api/books -> read:books
+- GET /api/books/{id} -> read:books
+- POST /api/books -> create:books
+- PUT /api/books/{id} -> update:books
+- DELETE /api/books/{id} -> delete:books
+
+Books API reenvía el mismo Bearer token del usuario a:
+
+GET http://localhost:5195/api/authorization/check?permission=<permiso>
+
+Books API solo usa BooksDemo. Users API es la única que consulta UsersDemo.

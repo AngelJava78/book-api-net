@@ -1,11 +1,13 @@
 using BooksApiDemo.DTOs;
 using BooksApiDemo.Models;
 using BooksApiDemo.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BooksApiDemo.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/books")]
 public class BooksController : ControllerBase
 {
@@ -17,6 +19,7 @@ public class BooksController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Policy = "read:books")]
     public async Task<ActionResult<IEnumerable<Book>>> GetAll()
     {
         var books = await _bookRepository.GetAllAsync();
@@ -24,6 +27,7 @@ public class BooksController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
+    [Authorize(Policy = "read:books")]
     public async Task<ActionResult<Book>> GetById(int id)
     {
         var book = await _bookRepository.GetByIdAsync(id);
@@ -35,6 +39,7 @@ public class BooksController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = "create:books")]
     public async Task<ActionResult<Book>> Create(CreateBookRequest request)
     {
         var book = new Book
@@ -50,6 +55,7 @@ public class BooksController : ControllerBase
     }
 
     [HttpPut("{id:int}")]
+    [Authorize(Policy = "update:books")]
     public async Task<IActionResult> Update(int id, UpdateBookRequest request)
     {
         var book = new Book
@@ -69,6 +75,7 @@ public class BooksController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
+    [Authorize(Policy = "delete:books")]
     public async Task<IActionResult> Delete(int id)
     {
         var deleted = await _bookRepository.DeleteAsync(id);
